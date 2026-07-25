@@ -1,4 +1,40 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -lE \"getString|class MMKV|interface MMKV\")",
+      "PowerShell(npx jest __tests__/features 2>&1)",
+      "PowerShell(npx tsc --noEmit 2>&1)",
+      "PowerShell(npx jest 2>&1)",
+      "PowerShell(npx jest __tests__/App.test.tsx 2>&1)",
+      "PowerShell(npm run tree 2>&1)",
+      "Bash(node -e \"const p=require\\('./node_modules/react-native-mmkv/package.json'\\); console.log\\('mmkv', p.version\\); console.log\\('peerDeps:', JSON.stringify\\(p.peerDependencies\\)\\); console.log\\('peerMeta:', JSON.stringify\\(p.peerDependenciesMeta\\)\\)\")",
+      "PowerShell(npm install react-native-nitro-modules --save 2>&1)",
+      "Bash(node -e \"const p=require\\('./node_modules/react-native-nitro-modules/package.json'\\); console.log\\('nitro-modules', p.version\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\(Object.keys\\(p.dependencies\\).filter\\(k=>k.includes\\('nitro'\\)||k.includes\\('mmkv'\\)\\).map\\(k=>k+': '+p.dependencies[k]\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(./gradlew.bat :app:assembleDebug -PreactNativeDevServerPort=8081)",
+      "Bash(node -e \"const p=require\\('./node_modules/react-native-mmkv/package.json'\\); console.log\\('devDeps nitro:', \\(p.devDependencies||{}\\)['react-native-nitro-modules']\\); console.log\\('all versions field:', p.version\\)\")",
+      "PowerShell(npm install react-native-nitro-modules@0.35.9 --save-exact 2>&1)",
+      "PowerShell(node -e \"const p=require\\('./package.json'\\); console.log\\('pinned:', p.dependencies['react-native-nitro-modules']\\)\")",
+      "Bash(./gradlew.bat :react-native-mmkv:clean :app:assembleDebug -PreactNativeDevServerPort=8081)",
+      "Bash(echo \"GRADLE_EXIT=$?\")",
+      "Bash(tasklist)",
+      "Bash(grep -nE 'BUILD SUCCESSFUL|BUILD FAILED|GRADLE_EXIT|AccessDenied|error:|What went wrong' 'C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--dev-CalendarMemory\\\\45843944-043b-4f86-8fb3-2d0b29b02ec0\\\\tasks\\\\b30dptp87.output')",
+      "Bash(./gradlew.bat :app:assembleDebug -PreactNativeDevServerPort=8081 --no-daemon)",
+      "Bash(grep -nE 'BUILD SUCCESSFUL|BUILD FAILED|GRADLE_EXIT|AccessDenied|FileNotFound|What went wrong' 'C:\\\\Users\\\\User\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--dev-CalendarMemory\\\\45843944-043b-4f86-8fb3-2d0b29b02ec0\\\\tasks\\\\b7vwnosfe.output')",
+      "PowerShell(try { Add-MpPreference -ExclusionPath \"C:\\\\dev\\\\CalendarMemory\" -ErrorAction Stop; Write-Host \"EXCLUSION_OK\" } catch { Write-Host \"EXCLUSION_FAILED: $\\($_.Exception.Message\\)\" })",
+      "Bash(./gradlew.bat :app:assembleDebug -PreactNativeArchitectures=x86_64 --no-daemon)",
+      "Bash(./gradlew.bat --stop)",
+      "Bash(xargs echo \"java procesos restantes:\")",
+      "PowerShell(npm uninstall react-native-mmkv react-native-nitro-modules 2>&1)",
+      "PowerShell(node -e \"const p=require\\('./package.json'\\); console.log\\('deps restantes con nitro/mmkv:', Object.keys\\(p.dependencies\\).filter\\(k=>/mmkv|nitro/.test\\(k\\)\\).join\\(', '\\)||'ninguna'\\)\")",
+      "Bash(node -e \"const p=require\\('./package.json'\\); const bad=Object.keys\\(p.dependencies\\).filter\\(k=>/mmkv|nitro/.test\\(k\\)\\); console.log\\('deps con nitro/mmkv:', bad.join\\(', '\\)||'NINGUNA'\\); console.log\\('op-sqlite sigue:', p.dependencies['@op-engineering/op-sqlite']\\)\")",
+      "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx tsc --noEmit 2>&1 | Select-Object -First 20; Write-Host \"TSC exit: $LASTEXITCODE\")",
+      "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx jest 2>&1 | Select-String -Pattern \"Tests:|Suites:|FAIL|PASS\"; Write-Host \"JEST exit: $LASTEXITCODE\")",
+      "Bash(npx react-native *)",
+      "Bash(/c/Users/User/AppData/Local/Android/Sdk/platform-tools/adb.exe shell *)",
+      "Bash(sleep 1)"
+    ]
+  },
   "hooks": {
     "PostToolUse": [
       {

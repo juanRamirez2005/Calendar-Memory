@@ -7,6 +7,10 @@
 ```
 CalendarMemory/
 ├── __tests__/
+│   ├── features/
+│   │   ├── semesters.test.ts
+│   │   ├── subjects.test.ts
+│   │   └── tasks.test.ts
 │   └── App.test.tsx
 ├── .bundle/
 │   └── config
@@ -73,7 +77,9 @@ CalendarMemory/
 ├── src/
 │   ├── app/
 │   │   ├── navigation/
-│   │   │   └── RootNavigator.tsx
+│   │   │   ├── MainTabs.tsx
+│   │   │   ├── RootNavigator.tsx
+│   │   │   └── types.ts
 │   │   ├── providers/
 │   │   │   └── index.tsx
 │   │   ├── store/
@@ -85,17 +91,126 @@ CalendarMemory/
 │   ├── core/
 │   │   ├── api/
 │   │   ├── config/
+│   │   │   └── preferences.ts
 │   │   ├── di/
+│   │   │   └── container.ts
 │   │   ├── errors/
+│   │   │   ├── AppError.ts
+│   │   │   └── result.ts
 │   │   └── storage/
+│   │       ├── migrations/
+│   │       │   └── index.ts
+│   │       ├── database.ts
+│   │       ├── keyValue.ts
+│   │       ├── SqliteDatabase.ts
+│   │       └── SqliteKeyValueStore.ts
 │   ├── features/
+│   │   ├── calendar/
+│   │   │   └── presentation/
+│   │   │       ├── components/
+│   │   │       │   └── MonthCalendar.tsx
+│   │   │       └── screens/
+│   │   │           └── CalendarScreen.tsx
+│   │   ├── semesters/
+│   │   │   ├── data/
+│   │   │   │   ├── datasources/
+│   │   │   │   │   ├── SemesterDataSource.ts
+│   │   │   │   │   └── SqliteSemesterDataSource.ts
+│   │   │   │   ├── dto/
+│   │   │   │   │   └── SemesterRow.ts
+│   │   │   │   ├── mappers/
+│   │   │   │   │   └── semesterMapper.ts
+│   │   │   │   └── repositories/
+│   │   │   │       └── SemesterRepositoryImpl.ts
+│   │   │   ├── domain/
+│   │   │   │   ├── entities/
+│   │   │   │   │   └── Semester.ts
+│   │   │   │   ├── repositories/
+│   │   │   │   │   └── SemesterRepository.ts
+│   │   │   │   └── usecases/
+│   │   │   │       └── semesterUseCases.ts
+│   │   │   └── presentation/
+│   │   │       ├── screens/
+│   │   │       │   ├── SemesterFormScreen.tsx
+│   │   │       │   └── SemestersScreen.tsx
+│   │   │       └── store/
+│   │   │           └── semestersStore.ts
+│   │   ├── settings/
+│   │   │   └── presentation/
+│   │   │       └── screens/
+│   │   │           └── SettingsScreen.tsx
+│   │   ├── subjects/
+│   │   │   ├── data/
+│   │   │   │   ├── datasources/
+│   │   │   │   │   ├── SqliteSubjectDataSource.ts
+│   │   │   │   │   └── SubjectDataSource.ts
+│   │   │   │   ├── dto/
+│   │   │   │   │   └── SubjectRow.ts
+│   │   │   │   ├── mappers/
+│   │   │   │   │   └── subjectMapper.ts
+│   │   │   │   └── repositories/
+│   │   │   │       └── SubjectRepositoryImpl.ts
+│   │   │   ├── domain/
+│   │   │   │   ├── entities/
+│   │   │   │   │   └── Subject.ts
+│   │   │   │   ├── repositories/
+│   │   │   │   │   └── SubjectRepository.ts
+│   │   │   │   └── usecases/
+│   │   │   │       └── subjectUseCases.ts
+│   │   │   └── presentation/
+│   │   │       ├── screens/
+│   │   │       │   ├── SubjectDetailScreen.tsx
+│   │   │       │   ├── SubjectFormScreen.tsx
+│   │   │       │   └── SubjectsScreen.tsx
+│   │   │       └── store/
+│   │   │           └── subjectsStore.ts
+│   │   └── tasks/
+│   │       ├── data/
+│   │       │   ├── datasources/
+│   │       │   │   ├── SqliteTaskDataSource.ts
+│   │       │   │   └── TaskDataSource.ts
+│   │       │   ├── dto/
+│   │       │   │   └── TaskRow.ts
+│   │       │   ├── mappers/
+│   │       │   │   └── taskMapper.ts
+│   │       │   └── repositories/
+│   │       │       └── TaskRepositoryImpl.ts
+│   │       ├── domain/
+│   │       │   ├── entities/
+│   │       │   │   └── Task.ts
+│   │       │   ├── repositories/
+│   │       │   │   └── TaskRepository.ts
+│   │       │   └── usecases/
+│   │       │       └── taskUseCases.ts
+│   │       └── presentation/
+│   │           ├── components/
+│   │           │   └── TaskListItem.tsx
+│   │           ├── screens/
+│   │           │   ├── TaskDetailScreen.tsx
+│   │           │   ├── TaskFormScreen.tsx
+│   │           │   └── TasksScreen.tsx
+│   │           ├── store/
+│   │           │   └── tasksStore.ts
+│   │           └── taskLabels.ts
 │   ├── shared/
 │   │   ├── constants/
 │   │   ├── hooks/
+│   │   │   └── useActiveSemester.ts
 │   │   ├── types/
 │   │   ├── ui/
+│   │   │   ├── Button.tsx
+│   │   │   ├── Card.tsx
+│   │   │   ├── EmptyState.tsx
+│   │   │   ├── index.ts
+│   │   │   ├── Pill.tsx
+│   │   │   ├── Screen.tsx
+│   │   │   └── TextField.tsx
 │   │   └── utils/
+│   │       ├── date.ts
+│   │       └── id.ts
 │   └── theme/
+│       ├── index.ts
+│       └── ThemeContext.tsx
 ├── .eslintrc.js
 ├── .gitignore
 ├── .prettierrc.js
@@ -105,6 +220,7 @@ CalendarMemory/
 ├── Gemfile
 ├── index.js
 ├── jest.config.js
+├── jest.setup.js
 ├── metro.config.js
 ├── package-lock.json
 ├── package.json

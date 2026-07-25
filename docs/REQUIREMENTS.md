@@ -54,7 +54,7 @@ El modelo es jerárquico: **Semestre → Materias → Tareas**.
 
 ### 2.5 Persistencia local
 - RF-24 Guardar semestres, materias y tareas en base local (SQLite) con integridad referencial (FK + cascada).
-- RF-25 Guardar preferencias (tema, semestre activo, primer día de semana) en almacenamiento clave-valor (MMKV).
+- RF-25 Guardar preferencias (tema, semestre activo, primer día de semana) en almacenamiento clave-valor (tabla SQLite con caché en memoria).
 
 ### 2.6 Ajustes básicos
 - RF-26 Tema claro/oscuro.
@@ -134,7 +134,7 @@ features/
 └── settings/     # tema, primer día de semana
 
 core/
-└── storage/      # adaptadores: SQLite (semestres/materias/tareas) + MMKV (preferencias)
+└── storage/      # adaptadores: SQLite (semestres/materias/tareas + preferencias)
 ```
 
 Cada feature: `data/` (datasources, dto, mappers, repositories) · `domain/` (entities, repositories, usecases) · `presentation/` (components, hooks, screens, store).
@@ -146,7 +146,7 @@ Cada feature: `data/` (datasources, dto, mappers, repositories) · `domain/` (en
 El proyecto está en esqueleto; el MVP requiere añadir:
 
 - **Navegación:** `@react-navigation/native` + stack/tabs.
-- **Persistencia:** SQLite (ej. `react-native-nitro-sqlite` o `op-sqlite`) + `react-native-mmkv`.
+- **Persistencia:** SQLite (`@op-engineering/op-sqlite`), usado tanto para datos como para preferencias.
 - **Calendario:** librería de calendario (ej. `react-native-calendars`) o vista propia.
 
 ---
@@ -155,7 +155,7 @@ El proyecto está en esqueleto; el MVP requiere añadir:
 
 | Fase | Alcance |
 |------|---------|
-| **F1 — Fundaciones** | Setup de SQLite + MMKV + navegación. Modelo de datos y migraciones. |
+| **F1 — Fundaciones** | Setup de SQLite (op-sqlite) + navegación. Modelo de datos y migraciones. |
 | **F2 — CRUD Semestres** | RF-01 a RF-06. Crear/activar/archivar semestres. |
 | **F3 — CRUD Materias** | RF-07 a RF-11. Materias del semestre activo. |
 | **F4 — CRUD Tareas** | RF-12 a RF-18. Tareas por materia, estados. |

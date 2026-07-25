@@ -11,7 +11,7 @@
 |----------|----------|---------|
 | Autenticación | **Ninguna** | Un usuario, un dispositivo. Auth sería fricción sin valor. |
 | Arquitectura | **Clean Architecture por capas** (data / domain / presentation) | Aísla reglas de negocio de la UI y de SQLite; testeable y sustituible. |
-| Persistencia | **SQLite** (datos) + **MMKV** (preferencias) | Integridad referencial y consultas indexadas; MMKV para clave-valor rápido. |
+| Persistencia | **SQLite** (op-sqlite) para datos **y** preferencias | Integridad referencial y consultas indexadas. Las preferencias van en una tabla clave-valor sobre el mismo SQLite (se descartó MMKV v4/Nitro por su build nativo inestable en Windows). |
 | Navegación | **React Navigation** (Native Stack + Bottom Tabs) | Estándar de facto, tipado con TypeScript. |
 | Estado UI | **Zustand** por feature | Ligero, sin boilerplate; los stores llaman a los *use cases*. |
 | Inyección | **Contenedor DI manual** en `core/di` | Provee repositorios/use cases; permite mockear en tests. |
@@ -149,7 +149,7 @@ graph LR
 | **Result / Either** | `core/errors/result.ts` | Manejo de errores explícito (`Ok`/`Err`) sin try/catch cruzando capas. |
 | **Provider (Context)** | `app/providers` | Expone el contenedor DB/DI, tema y semestre activo a todo el árbol. |
 | **Store por feature (Facade)** | `presentation/store` (Zustand) | Fachada de estado para la UI; oculta los use cases tras acciones simples. |
-| **Adapter** | `core/storage` | Envuelve SQLite y MMKV tras interfaces propias (`Database`, `KeyValueStore`). |
+| **Adapter** | `core/storage` | Envuelve SQLite tras interfaces propias (`Database`, y `KeyValueStore` para preferencias, con caché en memoria). |
 | **Migration** | `core/storage/migrations` | Versionado del esquema; evolución sin perder datos. |
 
 ---
@@ -253,7 +253,7 @@ src/
 │   ├── errors/result.ts          # Ok / Err
 │   └── storage/
 │       ├── database.ts           # adapter SQLite
-│       ├── keyValue.ts           # adapter MMKV
+│       ├── keyValue.ts           # KeyValueStore sobre SQLite (caché en memoria)
 │       └── migrations/
 ├── shared/
 │   ├── ui/                       # Button, Input, Card, EmptyState...
@@ -290,8 +290,8 @@ Cada feature de datos replica: `data/{datasources,dto,mappers,repositories}` · 
 | RF-07…11 (CRUD materias) | feature `subjects` + `SubjectsList`/`SubjectDetail`/`SubjectFormModal` |
 | RF-12…18 (CRUD tareas) | feature `tasks` + `TasksList`/`TaskDetail`/`TaskFormModal` |
 | RF-19…23 (calendario) | feature `calendar` + `CalendarScreen` (color por materia) |
-| RF-24…25 (persistencia) | `core/storage` (SQLite + MMKV) + Repositories |
-| RF-26…27 (ajustes) | `SettingsScreen` + `theme` + MMKV |
+| RF-24…25 (persistencia) | `core/storage` (SQLite: datos + preferencias) + Repositories |
+| RF-26…27 (ajustes) | `SettingsScreen` + `theme` + preferencias en SQLite |
 | RNF-03 (integridad/cascada) | FK `ON DELETE CASCADE` + `PRAGMA foreign_keys` |
 | RNF-04 (escalabilidad) | índices por semester/subject/due_date |
 
@@ -299,7 +299,7 @@ Cada feature de datos replica: `data/{datasources,dto,mappers,repositories}` · 
 
 ## 10. Orden de implementación
 
-1. **Fundaciones** — instalar deps (navigation, sqlite, mmkv, zustand, uuid); adapters `core/storage`; `Result`; contenedor DI; migración inicial.
+1. **Fundaciones** — instalar deps (navigation, op-sqlite, zustand); adapters `core/storage`; `Result`; contenedor DI; migración inicial.
 2. **Navegación** — `RootNavigator` + `MainTabs` con pantallas placeholder tipadas.
 3. **Semesters** (vertical completa: data → domain → presentation).
 4. **Subjects** (depende del semestre activo).
