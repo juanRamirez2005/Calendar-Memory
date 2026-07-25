@@ -36,10 +36,15 @@ export function MainTabs() {
         tabBarInactiveTintColor: theme.colors.textMuted,
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
-          borderTopColor: theme.colors.border,
+          borderTopWidth: 0,
+          height: 64,
+          paddingTop: 8,
+          paddingBottom: 10,
+          ...theme.shadow.md,
         },
-        tabBarIcon: ({ color }) => (
-          <Text style={{ fontSize: 18, color }}>
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+        tabBarIcon: ({ color, focused }) => (
+          <Text style={{ fontSize: focused ? 20 : 18, color }}>
             {ICONS[route.name as keyof TabParamList]}
           </Text>
         ),

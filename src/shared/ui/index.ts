@@ -4,4 +4,5 @@ export { Card } from './Card';
 export { EmptyState } from './EmptyState';
 export { Pill } from './Pill';
 export { Screen } from './Screen';
+export { ScreenHeader } from './ScreenHeader';
 export { TextField } from './TextField';

@@ -40,6 +40,15 @@ export function TaskFormScreen() {
   const [subjectId, setSubjectId] = useState(
     editing?.subjectId ?? route.params?.subjectId ?? '',
   );
+
+  // Auto-selecciona una materia si no hay ninguna elegida, para que el botón
+  // no quede deshabilitado sin motivo visible al crear.
+  useEffect(() => {
+    if (!subjectId && subjects.length > 0) {
+      setSubjectId(subjects[0].id);
+    }
+  }, [subjects, subjectId]);
+
   const [title, setTitle] = useState(editing?.title ?? '');
   const [description, setDescription] = useState(editing?.description ?? '');
   const [dueDate, setDueDate] = useState(

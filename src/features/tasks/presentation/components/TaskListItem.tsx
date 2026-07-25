@@ -26,7 +26,7 @@ function TaskListItemBase({
   const done = task.status === 'done';
 
   return (
-    <Card onPress={onPress}>
+    <Card onPress={onPress} accent={subjectColor}>
       <View style={styles.row}>
         <Pressable
           accessibilityRole="checkbox"
@@ -65,17 +65,18 @@ function TaskListItemBase({
               />
             ) : null}
             <Text style={[styles.due, { color: theme.colors.textMuted }]}>
-              {formatDate(task.dueDate)}
+              {task.dueDate ? `🗓  ${formatDate(task.dueDate)}` : 'Sin fecha'}
             </Text>
           </View>
         </View>
 
         <Pill
           label={done ? STATUS_LABEL.done : PRIORITY_LABEL[task.priority]}
-          color={
+          color={done ? theme.colors.success : theme.colors[PRIORITY_COLOR[task.priority]]}
+          softColor={
             done
-              ? theme.colors.success
-              : theme.colors[PRIORITY_COLOR[task.priority]]
+              ? theme.colors.successSoft
+              : theme.colors[`${PRIORITY_COLOR[task.priority]}Soft` as const]
           }
         />
       </View>

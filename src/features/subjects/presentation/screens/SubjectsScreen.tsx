@@ -2,7 +2,7 @@
 import React, { useCallback } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { Button, Card, EmptyState, Screen } from '@shared/ui';
+import { Card, EmptyState, Screen, ScreenHeader } from '@shared/ui';
 import { useActiveSemester } from '@shared/hooks/useActiveSemester';
 import { useTheme } from '@theme/ThemeContext';
 import type { TabScreenProps } from '@app/navigation/types';
@@ -35,9 +35,15 @@ export function SubjectsScreen() {
   }
 
   const renderItem = ({ item }: { item: Subject }) => (
-    <Card onPress={() => navigation.navigate('SubjectDetail', { subjectId: item.id })}>
+    <Card
+      accent={item.color}
+      onPress={() => navigation.navigate('SubjectDetail', { subjectId: item.id })}>
       <View style={styles.row}>
-        <View style={[styles.dot, { backgroundColor: item.color }]} />
+        <View style={[styles.badge, { backgroundColor: item.color }]}>
+          <Text style={styles.badgeText}>
+            {item.name.charAt(0).toUpperCase()}
+          </Text>
+        </View>
         <View style={styles.flex}>
           <Text style={[styles.name, { color: theme.colors.text }]}>
             {item.name}
@@ -46,32 +52,30 @@ export function SubjectsScreen() {
             {[item.code, item.professor].filter(Boolean).join(' · ') || 'Sin detalles'}
           </Text>
         </View>
+        <Text style={[styles.chevron, { color: item.color }]}>›</Text>
       </View>
     </Card>
   );
 
   return (
     <Screen>
-      <View style={styles.header}>
-        <View>
-          <Text style={[styles.title, { color: theme.colors.text }]}>
-            Materias
-          </Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textMuted }]}>
-            {active.name}
-          </Text>
-        </View>
-        <Button
-          title="Nueva"
-          onPress={() => navigation.navigate('SubjectForm', {})}
-        />
-      </View>
+      <ScreenHeader
+        title="Materias"
+        emoji="📚"
+        subtitle={active.name}
+        action={{
+          label: 'Nueva',
+          icon: '＋',
+          onPress: () => navigation.navigate('SubjectForm', {}),
+        }}
+      />
       <FlatList
         data={items}
         keyExtractor={item => item.id}
         renderItem={renderItem}
         ListEmptyComponent={
           <EmptyState
+            emoji="📚"
             title="Sin materias"
             message="Agrega las materias que estás cursando este semestre."
           />
@@ -83,18 +87,19 @@ export function SubjectsScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  title: { fontSize: 24, fontWeight: '700' },
-  subtitle: { fontSize: 13, marginTop: 2 },
   row: { flexDirection: 'row', alignItems: 'center' },
-  dot: { width: 14, height: 14, borderRadius: 7, marginRight: 12 },
+  badge: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    marginRight: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: { color: '#FFFFFF', fontSize: 19, fontWeight: '800' },
   flex: { flex: 1 },
-  name: { fontSize: 16, fontWeight: '600' },
+  name: { fontSize: 16.5, fontWeight: '700' },
   meta: { fontSize: 13, marginTop: 2 },
+  chevron: { fontSize: 26, fontWeight: '700', marginLeft: 8 },
   grow: { flexGrow: 1 },
 });

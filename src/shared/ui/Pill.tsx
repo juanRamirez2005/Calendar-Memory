@@ -5,18 +5,20 @@ import { StyleSheet, Text, View } from 'react-native';
 type Props = {
   label: string;
   color: string;
+  /** Fondo teñido opcional (para el estilo suave). */
+  softColor?: string;
   filled?: boolean;
 };
 
 /** Etiqueta compacta para estado / prioridad / color de materia. */
-export function Pill({ label, color, filled }: Props) {
+export function Pill({ label, color, softColor, filled }: Props) {
   return (
     <View
       style={[
         styles.pill,
         filled
           ? { backgroundColor: color }
-          : { borderColor: color, borderWidth: 1 },
+          : { backgroundColor: softColor ?? 'transparent', borderColor: color, borderWidth: softColor ? 0 : 1.5 },
       ]}>
       <Text style={[styles.text, { color: filled ? '#FFFFFF' : color }]}>
         {label}
@@ -28,12 +30,12 @@ export function Pill({ label, color, filled }: Props) {
 const styles = StyleSheet.create({
   pill: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingHorizontal: 11,
+    paddingVertical: 4,
     borderRadius: 999,
   },
   text: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

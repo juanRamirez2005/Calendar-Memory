@@ -11,13 +11,16 @@ import {
 import { useTheme } from '@theme/ThemeContext';
 
 type Variant = 'primary' | 'secondary' | 'danger';
+type Size = 'md' | 'sm';
 
 type Props = {
   title: string;
   onPress: () => void;
   variant?: Variant;
+  size?: Size;
   disabled?: boolean;
   loading?: boolean;
+  icon?: string;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -25,8 +28,10 @@ export function Button({
   title,
   onPress,
   variant = 'primary',
+  size = 'md',
   disabled,
   loading,
+  icon,
   style,
 }: Props) {
   const { theme } = useTheme();
@@ -36,10 +41,14 @@ export function Button({
     variant === 'primary'
       ? colors.primary
       : variant === 'danger'
-        ? colors.danger
+        ? colors.dangerSoft
         : colors.surfaceAlt;
   const fg =
-    variant === 'secondary' ? colors.text : colors.primaryText;
+    variant === 'primary'
+      ? colors.primaryText
+      : variant === 'danger'
+        ? colors.danger
+        : colors.text;
 
   return (
     <Pressable
@@ -49,17 +58,23 @@ export function Button({
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,
+        size === 'sm' ? styles.sm : styles.md,
+        variant === 'primary' && !disabled ? theme.shadow.sm : null,
         {
           backgroundColor: bg,
           borderRadius: theme.radius.md,
-          opacity: disabled ? 0.5 : pressed ? 0.85 : 1,
+          opacity: disabled ? 0.45 : pressed ? 0.9 : 1,
         },
+        pressed && styles.pressed,
         style,
       ]}>
       {loading ? (
         <ActivityIndicator color={fg} />
       ) : (
-        <Text style={[styles.label, { color: fg }]}>{title}</Text>
+        <Text style={[size === 'sm' ? styles.labelSm : styles.label, { color: fg }]}>
+          {icon ? `${icon}  ` : ''}
+          {title}
+        </Text>
       )}
     </Pressable>
   );
@@ -67,13 +82,13 @@ export function Button({
 
 const styles = StyleSheet.create({
   base: {
-    minHeight: 48,
-    paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
+  md: { minHeight: 52, paddingHorizontal: 22 },
+  sm: { minHeight: 40, paddingHorizontal: 16 },
+  pressed: { transform: [{ scale: 0.98 }] },
+  label: { fontSize: 16, fontWeight: '700', letterSpacing: 0.2 },
+  labelSm: { fontSize: 14, fontWeight: '700' },
 });

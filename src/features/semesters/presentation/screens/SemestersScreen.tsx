@@ -2,7 +2,7 @@
 import React, { useCallback } from 'react';
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { Button, Card, EmptyState, Pill, Screen } from '@shared/ui';
+import { Button, Card, EmptyState, Pill, Screen, ScreenHeader } from '@shared/ui';
 import { formatDate } from '@shared/utils/date';
 import { useTheme } from '@theme/ThemeContext';
 import type { RootScreenProps } from '@app/navigation/types';
@@ -86,21 +86,22 @@ export function SemestersScreen() {
 
   return (
     <Screen>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>
-          Semestres
-        </Text>
-        <Button
-          title="Nuevo"
-          onPress={() => navigation.navigate('SemesterForm', {})}
-        />
-      </View>
+      <ScreenHeader
+        title="Semestres"
+        emoji="🎓"
+        action={{
+          label: 'Nuevo',
+          icon: '＋',
+          onPress: () => navigation.navigate('SemesterForm', {}),
+        }}
+      />
       <FlatList
         data={items}
         keyExtractor={item => item.id}
         renderItem={renderItem}
         ListEmptyComponent={
           <EmptyState
+            emoji="🎓"
             title="Sin semestres"
             message="Crea tu primer semestre para empezar a registrar materias y tareas."
           />
@@ -112,13 +113,6 @@ export function SemestersScreen() {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  title: { fontSize: 24, fontWeight: '700' },
   rowBetween: {
     flexDirection: 'row',
     alignItems: 'center',

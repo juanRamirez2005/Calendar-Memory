@@ -32,7 +32,10 @@
       "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx jest 2>&1 | Select-String -Pattern \"Tests:|Suites:|FAIL|PASS\"; Write-Host \"JEST exit: $LASTEXITCODE\")",
       "Bash(npx react-native *)",
       "Bash(/c/Users/User/AppData/Local/Android/Sdk/platform-tools/adb.exe shell *)",
-      "Bash(sleep 1)"
+      "Bash(sleep 1)",
+      "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Host \"TSC exit: $LASTEXITCODE\")",
+      "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx jest 2>&1 | Select-String -Pattern \"Tests:|Suites:|FAIL\"; Write-Host \"JEST exit: $LASTEXITCODE\")",
+      "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx tsc --noEmit 2>&1 | Select-Object -First 10; Write-Host \"TSC exit: $LASTEXITCODE\")"
     ]
   },
   "hooks": {

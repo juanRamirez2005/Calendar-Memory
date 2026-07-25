@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getContainer } from '@core/di/container';
 import type { WeekStart } from '@core/config/preferences';
-import { Card, Screen } from '@shared/ui';
+import { Card, Screen, ScreenHeader } from '@shared/ui';
 import { useTheme } from '@theme/ThemeContext';
 import type { TabScreenProps } from '@app/navigation/types';
 
@@ -22,7 +22,7 @@ export function SettingsScreen() {
 
   return (
     <Screen>
-      <Text style={[styles.title, { color: theme.colors.text }]}>Ajustes</Text>
+      <ScreenHeader title="Ajustes" emoji="⚙️" />
 
       <Card>
         <View style={styles.rowBetween}>
@@ -93,7 +93,6 @@ export function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 24, fontWeight: '700', marginBottom: 16 },
   rowBetween: {
     flexDirection: 'row',
     alignItems: 'center',
