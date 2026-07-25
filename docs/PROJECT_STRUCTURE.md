@@ -8,6 +8,7 @@
 CalendarMemory/
 ├── __tests__/
 │   ├── features/
+│   │   ├── notificationPlanner.test.ts
 │   │   ├── semesters.test.ts
 │   │   ├── subjects.test.ts
 │   │   └── tasks.test.ts
@@ -111,6 +112,12 @@ CalendarMemory/
 │   │   │       │   └── MonthCalendar.tsx
 │   │   │       └── screens/
 │   │   │           └── CalendarScreen.tsx
+│   │   ├── notifications/
+│   │   │   ├── data/
+│   │   │   │   └── NotifeeNotificationService.ts
+│   │   │   └── domain/
+│   │   │       ├── notificationPlanner.ts
+│   │   │       └── NotificationService.ts
 │   │   ├── semesters/
 │   │   │   ├── data/
 │   │   │   │   ├── datasources/

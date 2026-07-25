@@ -27,6 +27,9 @@ import {
   type TaskUseCases,
 } from '@features/tasks/domain/usecases/taskUseCases';
 
+import type { NotificationService } from '@features/notifications/domain/NotificationService';
+import { NotifeeNotificationService } from '@features/notifications/data/NotifeeNotificationService';
+
 export type Container = {
   db: Database;
   prefs: KeyValueStore;
@@ -34,6 +37,7 @@ export type Container = {
   semesters: SemesterUseCases;
   subjects: SubjectUseCases;
   tasks: TaskUseCases;
+  notifications: NotificationService;
 };
 
 let container: Container | null = null;
@@ -53,7 +57,43 @@ export function createContainer(db: Database, prefs: KeyValueStore): Container {
     semesters: buildSemesterUseCases(semesterRepo),
     subjects: buildSubjectUseCases(subjectRepo),
     tasks: buildTaskUseCases(taskRepo),
+    notifications: new NotifeeNotificationService(),
   };
+}
+
+/**
+ * Re-sincroniza los recordatorios del semestre activo. Best-effort: garantiza
+ * que las notificaciones existan tras reinstalar la app o limpiar alarmas.
+ */
+async function syncNotifications(c: Container): Promise<void> {
+  try {
+    await c.notifications.init();
+    const active = await c.semesters.getActive.execute();
+    if (!active.ok || !active.value) {
+      return;
+    }
+    const [tasks, subjects] = await Promise.all([
+      c.tasks.listBySemester.execute(active.value.id),
+      c.subjects.listBySemester.execute(active.value.id),
+    ]);
+    if (!tasks.ok) {
+      return;
+    }
+    const nameById = new Map(
+      (subjects.ok ? subjects.value : []).map(s => [s.id, s.name]),
+    );
+    for (const t of tasks.value) {
+      await c.notifications.scheduleForTask({
+        taskId: t.id,
+        title: t.title,
+        subjectName: nameById.get(t.subjectId),
+        dueDate: t.dueDate,
+        status: t.status,
+      });
+    }
+  } catch {
+    // best-effort
+  }
 }
 
 /**
@@ -69,6 +109,8 @@ export async function initContainer(): Promise<Container> {
   const prefs = new SqliteKeyValueStore(db);
   await prefs.hydrate();
   container = createContainer(db, prefs);
+  // No bloquear el arranque: la sincronización de recordatorios corre en background.
+  void syncNotifications(container);
   return container;
 }
 

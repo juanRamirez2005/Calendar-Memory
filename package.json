@@ -11,6 +11,7 @@
     "tree": "node scripts/generate-tree.js"
   },
   "dependencies": {
+    "@notifee/react-native": "^9.1.8",
     "@op-engineering/op-sqlite": "^17.1.2",
     "@react-native/new-app-screen": "0.86.0",
     "@react-navigation/bottom-tabs": "^7.18.14",

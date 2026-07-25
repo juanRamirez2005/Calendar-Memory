@@ -26,6 +26,19 @@ type TasksState = {
   remove: (id: string) => Promise<void>;
 };
 
+/** (Re)programa los recordatorios de una tarea, resolviendo el nombre de la materia. */
+async function syncReminders(task: Task) {
+  const c = getContainer();
+  const subj = await c.subjects.get.execute(task.subjectId);
+  await c.notifications.scheduleForTask({
+    taskId: task.id,
+    title: task.title,
+    subjectName: subj.ok && subj.value ? subj.value.name : undefined,
+    dueDate: task.dueDate,
+    status: task.status,
+  });
+}
+
 async function reload(
   scope: Scope,
   set: (partial: Partial<TasksState>) => void,
@@ -70,6 +83,7 @@ export const useTasksStore = create<TasksState>((set, get) => ({
       set({ error: res.error.message });
       return false;
     }
+    await syncReminders(res.value);
     await reload(get().scope, set);
     return true;
   },
@@ -80,6 +94,7 @@ export const useTasksStore = create<TasksState>((set, get) => ({
       set({ error: res.error.message });
       return false;
     }
+    await syncReminders(res.value);
     await reload(get().scope, set);
     return true;
   },
@@ -90,10 +105,12 @@ export const useTasksStore = create<TasksState>((set, get) => ({
       set({ error: res.error.message });
       return;
     }
+    await syncReminders(res.value);
     await reload(get().scope, set);
   },
 
   remove: async id => {
+    await getContainer().notifications.cancelForTask(id);
     const res = await getContainer().tasks.remove.execute(id);
     if (!res.ok) {
       set({ error: res.error.message });

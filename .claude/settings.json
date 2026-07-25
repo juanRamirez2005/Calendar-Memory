@@ -35,7 +35,9 @@
       "Bash(sleep 1)",
       "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx tsc --noEmit 2>&1 | Select-Object -First 30; Write-Host \"TSC exit: $LASTEXITCODE\")",
       "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx jest 2>&1 | Select-String -Pattern \"Tests:|Suites:|FAIL\"; Write-Host \"JEST exit: $LASTEXITCODE\")",
-      "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx tsc --noEmit 2>&1 | Select-Object -First 10; Write-Host \"TSC exit: $LASTEXITCODE\")"
+      "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx tsc --noEmit 2>&1 | Select-Object -First 10; Write-Host \"TSC exit: $LASTEXITCODE\")",
+      "PowerShell(cd C:\\\\dev\\\\CalendarMemory; npx tsc --noEmit 2>&1 | Select-Object -First 25; Write-Host \"TSC exit: $LASTEXITCODE\")",
+      "Bash(./gradlew.bat :app:installDebug -PreactNativeArchitectures=x86_64 --no-daemon)"
     ]
   },
   "hooks": {
