@@ -97,7 +97,9 @@ export class NotifeeNotificationService implements NotificationService {
             body: plan.body,
             android: {
               channelId: channelFor(plan.urgency),
-              smallIcon: 'ic_launcher',
+              // Silueta blanca sobre transparente: Android recorta el icono de
+              // statusbar a su alfa, por lo que ic_launcher saldria como un borron.
+              smallIcon: 'ic_stat_notification',
               color: COLORS[plan.urgency],
               pressAction: { id: 'default' },
             },

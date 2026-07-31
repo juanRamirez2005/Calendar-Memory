@@ -36,20 +36,39 @@ CalendarMemory/
 │   │   │       │           └── MainApplication.kt
 │   │   │       ├── res/
 │   │   │       │   ├── drawable/
+│   │   │       │   │   ├── ic_launcher_background.xml
 │   │   │       │   │   └── rn_edit_text_material.xml
+│   │   │       │   ├── drawable-hdpi/
+│   │   │       │   │   └── ic_stat_notification.png
+│   │   │       │   ├── drawable-mdpi/
+│   │   │       │   │   └── ic_stat_notification.png
+│   │   │       │   ├── drawable-xhdpi/
+│   │   │       │   │   └── ic_stat_notification.png
+│   │   │       │   ├── drawable-xxhdpi/
+│   │   │       │   │   └── ic_stat_notification.png
+│   │   │       │   ├── drawable-xxxhdpi/
+│   │   │       │   │   └── ic_stat_notification.png
+│   │   │       │   ├── mipmap-anydpi-v26/
+│   │   │       │   │   ├── ic_launcher_round.xml
+│   │   │       │   │   └── ic_launcher.xml
 │   │   │       │   ├── mipmap-hdpi/
+│   │   │       │   │   ├── ic_launcher_foreground.png
 │   │   │       │   │   ├── ic_launcher_round.png
 │   │   │       │   │   └── ic_launcher.png
 │   │   │       │   ├── mipmap-mdpi/
+│   │   │       │   │   ├── ic_launcher_foreground.png
 │   │   │       │   │   ├── ic_launcher_round.png
 │   │   │       │   │   └── ic_launcher.png
 │   │   │       │   ├── mipmap-xhdpi/
+│   │   │       │   │   ├── ic_launcher_foreground.png
 │   │   │       │   │   ├── ic_launcher_round.png
 │   │   │       │   │   └── ic_launcher.png
 │   │   │       │   ├── mipmap-xxhdpi/
+│   │   │       │   │   ├── ic_launcher_foreground.png
 │   │   │       │   │   ├── ic_launcher_round.png
 │   │   │       │   │   └── ic_launcher.png
 │   │   │       │   ├── mipmap-xxxhdpi/
+│   │   │       │   │   ├── ic_launcher_foreground.png
 │   │   │       │   │   ├── ic_launcher_round.png
 │   │   │       │   │   └── ic_launcher.png
 │   │   │       │   └── values/
@@ -58,7 +77,8 @@ CalendarMemory/
 │   │   │       └── AndroidManifest.xml
 │   │   ├── build.gradle
 │   │   ├── debug.keystore
-│   │   └── proguard-rules.pro
+│   │   ├── proguard-rules.pro
+│   │   └── release.keystore
 │   ├── gradle/
 │   │   └── wrapper/
 │   │       ├── gradle-wrapper.jar
@@ -67,13 +87,17 @@ CalendarMemory/
 │   ├── gradle.properties
 │   ├── gradlew
 │   ├── gradlew.bat
+│   ├── keystore.properties
+│   ├── keystore.properties.example
 │   ├── local.properties
 │   └── settings.gradle
 ├── docs/
 │   ├── ARCHITECTURE.md
+│   ├── BUILD.md
 │   ├── PROJECT_STRUCTURE.md
 │   └── REQUIREMENTS.md
 ├── scripts/
+│   ├── generate-icons.ps1
 │   └── generate-tree.js
 ├── src/
 │   ├── app/
