@@ -1,6 +1,13 @@
 // src/features/tasks/presentation/screens/TaskFormScreen.tsx
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
   Button,
@@ -30,6 +37,11 @@ export function TaskFormScreen() {
 
   const subjects = useSubjectsStore(s => s.items);
   const loadSubjects = useSubjectsStore(s => s.load);
+  // Las materias del semestre ya se resolvieron: evita mostrar el vacío
+  // "Primero crea una materia" mientras la consulta sigue en vuelo.
+  const subjectsReady = useSubjectsStore(
+    s => s.semesterId === active?.id && !s.loading,
+  );
   const { items, create, update } = useTasksStore();
 
   const editing = useMemo(
@@ -98,12 +110,43 @@ export function TaskFormScreen() {
     navigation,
   ]);
 
+  if (!active) {
+    return (
+      <Screen edges={STACK_SCREEN_EDGES}>
+        <EmptyState
+          emoji="🎓"
+          title="Sin semestre activo"
+          message="Activa un semestre para poder registrar tareas."
+        />
+        <Button
+          title="Ir a Semestres"
+          onPress={() => navigation.replace('Semesters')}
+        />
+      </Screen>
+    );
+  }
+
+  if (!subjectsReady) {
+    return (
+      <Screen edges={STACK_SCREEN_EDGES}>
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      </Screen>
+    );
+  }
+
   if (subjects.length === 0) {
     return (
       <Screen edges={STACK_SCREEN_EDGES}>
         <EmptyState
+          emoji="📚"
           title="Primero crea una materia"
-          message="Las tareas se asignan a una materia. Crea una materia en la pestaña Materias."
+          message="Las tareas se asignan a una materia. Crea una y vuelve a intentarlo."
+        />
+        <Button
+          title="Crear materia"
+          onPress={() => navigation.replace('SubjectForm', {})}
         />
       </Screen>
     );
@@ -270,4 +313,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   error: { fontSize: 13, marginBottom: 12 },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });

@@ -2,6 +2,17 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!--
+      Los recordatorios de entrega son alarmas exactas: deben sonar a las 9:00 del
+      día que toca, no cuando el sistema decida agrupar trabajo diferido. En
+      Android 12/13 (API 31-32) el permiso se concede solo, pero el usuario puede
+      revocarlo; desde API 33 hay que mandarlo a la pantalla de acceso especial
+      (notifee.openAlarmPermissionSettings). No usamos USE_EXACT_ALARM porque
+      obliga a justificar ante Play que la app es de alarmas/relojes.
+    -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Reprograma los recordatorios tras reiniciar el teléfono. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
       android:name=".MainApplication"

@@ -1,11 +1,12 @@
 // src/features/settings/presentation/screens/SettingsScreen.tsx
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { getContainer } from '@core/di/container';
 import type { WeekStart } from '@core/config/preferences';
-import { Card, Screen, ScreenHeader } from '@shared/ui';
+import { Button, Card, Screen, ScreenHeader } from '@shared/ui';
 import { useTheme } from '@theme/ThemeContext';
+import type { NotificationPermissionState } from '@features/notifications/domain/NotificationService';
 import type { TabScreenProps } from '@app/navigation/types';
 
 export function SettingsScreen() {
@@ -13,6 +14,25 @@ export function SettingsScreen() {
   const { theme, mode, toggleMode } = useTheme();
   const [weekStart, setWeekStartState] = useState<WeekStart>(() =>
     getContainer().preferences.getWeekStart(),
+  );
+  const [permissions, setPermissions] =
+    useState<NotificationPermissionState | null>(null);
+
+  // Se relee al volver de Ajustes del sistema, que es donde se concede.
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+      void getContainer()
+        .notifications.getPermissionState()
+        .then(state => {
+          if (mounted) {
+            setPermissions(state);
+          }
+        });
+      return () => {
+        mounted = false;
+      };
+    }, []),
   );
 
   const setWeekStart = (value: WeekStart) => {
@@ -75,6 +95,27 @@ export function SettingsScreen() {
         </View>
       </Card>
 
+      {permissions && !permissions.exactAlarms ? (
+        <Card accent={theme.colors.danger}>
+          <Text style={[styles.rowLabel, { color: theme.colors.text }]}>
+            Recordatorios imprecisos
+          </Text>
+          <Text style={[styles.note, { color: theme.colors.textMuted }]}>
+            Android no está dejando programar alarmas exactas, así que los avisos
+            de entrega pueden llegar tarde. Concede el acceso especial para que
+            suenen a la hora.
+          </Text>
+          <Button
+            title="Abrir ajustes de alarmas"
+            variant="secondary"
+            onPress={() =>
+              void getContainer().notifications.openExactAlarmSettings()
+            }
+            style={styles.permissionAction}
+          />
+        </Card>
+      ) : null}
+
       <Card onPress={() => navigation.navigate('Semesters')}>
         <View style={styles.rowBetween}>
           <View>
@@ -99,6 +140,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   rowLabel: { fontSize: 16, fontWeight: '600' },
+  note: { fontSize: 13.5, lineHeight: 20, marginTop: 6 },
+  permissionAction: { marginTop: 14 },
   segment: { flexDirection: 'row', gap: 8, marginTop: 12 },
   segmentItem: {
     flex: 1,

@@ -15,12 +15,15 @@ export class SemesterRepositoryImpl implements SemesterRepository {
   constructor(private readonly ds: SemesterDataSource) {}
 
   async create(input: CreateSemesterInput): Promise<Semester> {
+    // Si no hay ninguno activo, el recién creado lo queda: sin semestre activo
+    // las pestañas de materias y tareas no dejan registrar nada.
+    const active = await this.ds.selectActive();
     const row: SemesterRow = {
       id: createId(),
       name: input.name,
       start_date: input.startDate,
       end_date: input.endDate,
-      is_active: 0,
+      is_active: active ? 0 : 1,
       is_archived: 0,
     };
     await this.ds.insert(row);

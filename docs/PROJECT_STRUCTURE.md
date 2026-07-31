@@ -9,6 +9,7 @@ CalendarMemory/
 ├── __tests__/
 │   ├── features/
 │   │   ├── notificationPlanner.test.ts
+│   │   ├── notificationService.test.ts
 │   │   ├── semesters.test.ts
 │   │   ├── subjects.test.ts
 │   │   └── tasks.test.ts

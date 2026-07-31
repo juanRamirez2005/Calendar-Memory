@@ -41,7 +41,16 @@
       "PowerShell(powershell -ExecutionPolicy Bypass -File c:\\\\dev\\\\CalendarMemory\\\\scripts\\\\generate-icons.ps1)",
       "Bash(tasklist //FI \"IMAGENAME eq java.exe\")",
       "PowerShell(Get-ChildItem C:\\\\dev\\\\CalendarMemory\\\\android\\\\app\\\\build\\\\outputs\\\\apk\\\\release\\\\ | Select-Object Name, @{n='MB';e={[math]::Round\\($_.Length/1MB,1\\)}}, LastWriteTime)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "PowerShell(npx tsc --noEmit)",
+      "PowerShell(npx jest --silent 2>&1)",
+      "PowerShell(npx jest __tests__/repro.taskform.test.tsx 2>&1)",
+      "PowerShell(npx eslint src/features/tasks/presentation/screens/TaskFormScreen.tsx src/features/semesters/data/repositories/SemesterRepositoryImpl.ts __tests__/features/semesters.test.ts)",
+      "PowerShell(npx jest __tests__/features/notificationService.test.ts 2>&1)",
+      "PowerShell(npx eslint src/features/notifications/ src/features/settings/ jest.setup.js __tests__/features/notificationService.test.ts)",
+      "PowerShell($adb = \"$env:LOCALAPPDATA\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\"; if \\(Test-Path $adb\\) { Write-Output \"adb: $adb\"; & $adb devices -l } else { Write-Output \"adb no esta en la ruta por defecto\"; if \\($null -ne \\(Get-Command adb -ErrorAction SilentlyContinue\\)\\) { Write-Output \"pero si esta en PATH\"; adb devices -l } else { Write-Output \"tampoco en PATH\" } })",
+      "PowerShell($adb = \"$env:LOCALAPPDATA\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\"; & $adb install -r C:\\\\dev\\\\CalendarMemory\\\\android\\\\app\\\\build\\\\outputs\\\\apk\\\\release\\\\app-release.apk)",
+      "PowerShell($adb = \"$env:LOCALAPPDATA\\\\Android\\\\Sdk\\\\platform-tools\\\\adb.exe\"; Write-Output \"=== lastUpdateTime \\(debe ser de ahora\\) ===\"; & $adb shell dumpsys package com.calendarmemory | Select-String -Pattern \"firstInstallTime|lastUpdateTime\"; Write-Output \"=== la base SQLite sigue ahi? ===\"; & $adb shell run-as com.calendarmemory ls -la databases/ 2>&1; Write-Output \"=== alarmas exactas concedidas? ===\"; & $adb shell dumpsys alarm | Select-String -Pattern \"com.calendarmemory\" | Select-Object -First 5)"
     ]
   },
   "hooks": {

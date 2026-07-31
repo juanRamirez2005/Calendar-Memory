@@ -72,6 +72,22 @@ describe('semesters', () => {
     expect(list.ok && list.value[0].name).toBe('2026-1');
   });
 
+  it('activa el primer semestre creado', async () => {
+    const { repo } = setup();
+    const first = await repo.create(validInput);
+    expect(first.isActive).toBe(true);
+    expect((await repo.getActive())?.id).toBe(first.id);
+  });
+
+  it('no roba el activo al crear un semestre adicional', async () => {
+    const { repo } = setup();
+    const first = await repo.create(validInput);
+    const second = await repo.create({ ...validInput, name: '2026-2' });
+
+    expect(second.isActive).toBe(false);
+    expect((await repo.getActive())?.id).toBe(first.id);
+  });
+
   it('rechaza nombre vacío', async () => {
     const { uc } = setup();
     const res = await uc.create.execute({ ...validInput, name: '   ' });
