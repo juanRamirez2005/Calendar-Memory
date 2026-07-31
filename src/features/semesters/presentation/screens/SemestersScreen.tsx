@@ -2,7 +2,15 @@
 import React, { useCallback } from 'react';
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { Button, Card, EmptyState, Pill, Screen, ScreenHeader } from '@shared/ui';
+import {
+  Button,
+  Card,
+  EmptyState,
+  Pill,
+  Screen,
+  ScreenHeader,
+  STACK_SCREEN_EDGES,
+} from '@shared/ui';
 import { formatDate } from '@shared/utils/date';
 import { useTheme } from '@theme/ThemeContext';
 import type { RootScreenProps } from '@app/navigation/types';
@@ -85,7 +93,7 @@ export function SemestersScreen() {
   );
 
   return (
-    <Screen>
+    <Screen edges={STACK_SCREEN_EDGES}>
       <ScreenHeader
         title="Semestres"
         emoji="🎓"

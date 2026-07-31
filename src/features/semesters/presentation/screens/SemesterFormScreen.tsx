@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Button, Screen, TextField } from '@shared/ui';
+import { Button, Screen, STACK_SCREEN_EDGES, TextField } from '@shared/ui';
 import { todayKey } from '@shared/utils/date';
 import { useTheme } from '@theme/ThemeContext';
 import type { RootScreenProps } from '@app/navigation/types';
@@ -38,7 +38,7 @@ export function SemesterFormScreen() {
   };
 
   return (
-    <Screen>
+    <Screen edges={STACK_SCREEN_EDGES}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Text style={[styles.title, { color: theme.colors.text }]}>
           {editing ? 'Editar semestre' : 'Nuevo semestre'}

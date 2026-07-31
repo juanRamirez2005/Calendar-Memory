@@ -2,7 +2,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Button, EmptyState, Screen, TextField } from '@shared/ui';
+import {
+  Button,
+  EmptyState,
+  Screen,
+  STACK_SCREEN_EDGES,
+  TextField,
+} from '@shared/ui';
 import { useActiveSemester } from '@shared/hooks/useActiveSemester';
 import { useTheme } from '@theme/ThemeContext';
 import { useSubjectsStore } from '@features/subjects/presentation/store/subjectsStore';
@@ -94,7 +100,7 @@ export function TaskFormScreen() {
 
   if (subjects.length === 0) {
     return (
-      <Screen>
+      <Screen edges={STACK_SCREEN_EDGES}>
         <EmptyState
           title="Primero crea una materia"
           message="Las tareas se asignan a una materia. Crea una materia en la pestaña Materias."
@@ -104,7 +110,7 @@ export function TaskFormScreen() {
   }
 
   return (
-    <Screen>
+    <Screen edges={STACK_SCREEN_EDGES}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Text style={[styles.title, { color: theme.colors.text }]}>
           {editing ? 'Editar tarea' : 'Nueva tarea'}

@@ -11,8 +11,12 @@ se omiten `armeabi-v7a` y `x86`. Para un teléfono viejo de 32 bits:
 
 ```powershell
 cd android
-.\gradlew.bat assembleRelease -PreactNativeArchitectures=armeabi-v7a,arm64-v8a
+.\gradlew.bat assembleRelease "-PreactNativeArchitectures=armeabi-v7a,arm64-v8a"
 ```
+
+> Las comillas son obligatorias en PowerShell: sin ellas interpreta la coma como
+> operador de array y falla con `Falta un argumento en la lista de parámetros`.
+> En CMD o Git Bash el argumento va sin comillas.
 
 ## Firma
 
@@ -39,10 +43,14 @@ y rellena las contraseñas.
 
 ## Generar el APK
 
+Gradle se invoca desde `android/`, así que todo este flujo asume esa carpeta como
+directorio de trabajo:
+
 ```powershell
-cd android
+cd C:\dev\CalendarMemory\android
 .\gradlew.bat assembleRelease
-```
+``
+
 
 Salida: `android/app/build/outputs/apk/release/app-release.apk`.
 
@@ -50,13 +58,27 @@ El APK de release trae el bundle JS embebido: funciona sin PC y sin Metro.
 
 ## Instalarlo
 
-**Por cable** (con depuración USB activada en Opciones de desarrollador):
+**Por cable** (con depuración USB activada en Opciones de desarrollador). Ojo con
+el directorio: la ruta de abajo es relativa a `android/`, que es donde te dejó el
+paso anterior.
 
 ```powershell
-adb install -r android\app\build\outputs\apk\release\app-release.apk
+adb install -r app\build\outputs\apk\release\app-release.apk
 ```
 
-`-r` reinstala conservando los datos, siempre que la firma sea la misma.
+Desde la raíz del repo sería `android\app\build\outputs\apk\release\app-release.apk`.
+
+`-r` reinstala conservando los datos (la base SQLite con semestres y tareas),
+siempre que la firma sea la misma.
+
+Si `adb` responde `device unauthorized`, reinicia su daemon —no hace falta tocar
+nada en el teléfono— y acepta el diálogo de autorización si aparece:
+
+```powershell
+adb kill-server; adb start-server; adb devices
+```
+
+Debe listar el dispositivo como `device`, no como `unauthorized`.
 
 **Sin cable**: copia el `.apk` al teléfono (Drive, cable MTP, WhatsApp a ti mismo)
 y ábrelo desde el explorador de archivos. Android pedirá permitir "instalar apps

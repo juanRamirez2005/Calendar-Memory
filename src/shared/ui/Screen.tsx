@@ -9,6 +9,18 @@ type Props = React.PropsWithChildren<{
   padded?: boolean;
 }>;
 
+/**
+ * Bordes para las pantallas del stack. A diferencia de las de pestañas, no
+ * tienen barra inferior que ocupe el área de la barra de navegación del
+ * sistema, así que deben reservar ese inset ellas mismas.
+ */
+export const STACK_SCREEN_EDGES: readonly Edge[] = [
+  'top',
+  'left',
+  'right',
+  'bottom',
+];
+
 export function Screen({
   children,
   edges = ['top', 'left', 'right'],

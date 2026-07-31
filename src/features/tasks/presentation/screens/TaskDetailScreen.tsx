@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { getContainer } from '@core/di/container';
-import { Button, Pill, Screen } from '@shared/ui';
+import { Button, Pill, Screen, STACK_SCREEN_EDGES } from '@shared/ui';
 import { formatDate } from '@shared/utils/date';
 import { useTheme } from '@theme/ThemeContext';
 import type { RootScreenProps } from '@app/navigation/types';
@@ -42,7 +42,7 @@ export function TaskDetailScreen() {
 
   if (!task) {
     return (
-      <Screen>
+      <Screen edges={STACK_SCREEN_EDGES}>
         <Text style={{ color: theme.colors.textMuted }}>Cargando…</Text>
       </Screen>
     );
@@ -70,7 +70,7 @@ export function TaskDetailScreen() {
   };
 
   return (
-    <Screen>
+    <Screen edges={STACK_SCREEN_EDGES}>
       <ScrollView>
         <Pill label={subjectName || 'Materia'} color={subjectColor} filled />
         <Text style={[styles.title, { color: theme.colors.text }]}>

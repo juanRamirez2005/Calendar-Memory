@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@theme/ThemeContext';
 import { useSemestersStore } from '@features/semesters/presentation/store/semestersStore';
 import { CalendarScreen } from '@features/calendar/presentation/screens/CalendarScreen';
@@ -19,8 +20,16 @@ const ICONS: Record<keyof TabParamList, string> = {
   Settings: '⚙',
 };
 
+/** Alto útil de la barra, sin contar el área reservada al sistema. */
+const TAB_BAR_HEIGHT = 64;
+
 export function MainTabs() {
   const { theme } = useTheme();
+  // Con targetSdk 35+ el edge-to-edge es obligatorio desde Android 15, así que la
+  // app dibuja detrás de la barra de navegación. React Navigation solo aplica el
+  // inset inferior por su cuenta si no le fijamos height/paddingBottom, cosa que
+  // aquí sí hacemos: hay que sumarlo a mano o los tres botones tapan las tabs.
+  const insets = useSafeAreaInsets();
   const loadSemesters = useSemestersStore(s => s.load);
 
   // Carga inicial del semestre activo, del que dependen las demás pestañas.
@@ -37,9 +46,9 @@ export function MainTabs() {
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
           borderTopWidth: 0,
-          height: 64,
+          height: TAB_BAR_HEIGHT + insets.bottom,
           paddingTop: 8,
-          paddingBottom: 10,
+          paddingBottom: 10 + insets.bottom,
           ...theme.shadow.md,
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },

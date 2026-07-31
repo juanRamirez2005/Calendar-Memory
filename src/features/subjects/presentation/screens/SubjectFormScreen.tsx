@@ -2,7 +2,7 @@
 import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Button, Screen, TextField } from '@shared/ui';
+import { Button, Screen, STACK_SCREEN_EDGES, TextField } from '@shared/ui';
 import { useActiveSemester } from '@shared/hooks/useActiveSemester';
 import { useTheme } from '@theme/ThemeContext';
 import { SUBJECT_COLORS } from '@theme/index';
@@ -55,7 +55,7 @@ export function SubjectFormScreen() {
   };
 
   return (
-    <Screen>
+    <Screen edges={STACK_SCREEN_EDGES}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Text style={[styles.title, { color: theme.colors.text }]}>
           {editing ? 'Editar materia' : 'Nueva materia'}

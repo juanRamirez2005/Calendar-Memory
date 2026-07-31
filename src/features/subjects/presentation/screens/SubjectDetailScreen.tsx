@@ -3,7 +3,13 @@ import React, { useCallback, useState } from 'react';
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { getContainer } from '@core/di/container';
-import { Button, EmptyState, Pill, Screen } from '@shared/ui';
+import {
+  Button,
+  EmptyState,
+  Pill,
+  Screen,
+  STACK_SCREEN_EDGES,
+} from '@shared/ui';
 import { useTheme } from '@theme/ThemeContext';
 import { useTasksStore } from '@features/tasks/presentation/store/tasksStore';
 import { TaskListItem } from '@features/tasks/presentation/components/TaskListItem';
@@ -39,7 +45,7 @@ export function SubjectDetailScreen() {
 
   if (!subject) {
     return (
-      <Screen>
+      <Screen edges={STACK_SCREEN_EDGES}>
         <Text style={{ color: theme.colors.textMuted }}>Cargando…</Text>
       </Screen>
     );
@@ -75,7 +81,7 @@ export function SubjectDetailScreen() {
   );
 
   return (
-    <Screen>
+    <Screen edges={STACK_SCREEN_EDGES}>
       <View style={styles.headerRow}>
         <View style={[styles.dot, { backgroundColor: subject.color }]} />
         <Text style={[styles.title, { color: theme.colors.text }]}>
