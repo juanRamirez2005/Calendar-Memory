@@ -16,6 +16,7 @@ export type TabParamList = {
 export type RootStackParamList = {
   MainTabs: NavigatorScreenParams<TabParamList>;
   Semesters: undefined;
+  SemesterHistory: { semesterId: string };
   SubjectDetail: { subjectId: string };
   TaskDetail: { taskId: string };
   // Modales de formulario (id ausente = crear)

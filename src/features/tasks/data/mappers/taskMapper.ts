@@ -11,5 +11,7 @@ export function rowToTask(row: TaskRow): Task {
     dueDate: row.due_date ?? undefined,
     status: row.status as TaskStatus,
     priority: row.priority as Priority,
+    createdAt: row.created_at ?? undefined,
+    completedAt: row.completed_at ?? undefined,
   };
 }

@@ -42,10 +42,11 @@ class InMemoryTaskDataSource implements TaskDataSource {
       this.rows[i] = { ...row };
     }
   }
-  async updateStatus(id: string, status: string) {
+  async updateStatus(id: string, status: string, completedAt: string | null) {
     const r = this.rows.find(x => x.id === id);
     if (r) {
       r.status = status;
+      r.completed_at = completedAt;
     }
   }
   async deleteById(id: string) {
@@ -53,11 +54,18 @@ class InMemoryTaskDataSource implements TaskDataSource {
   }
 }
 
+/** Reloj controlable: el repo lo usa para sellar created_at/completed_at. */
+function fakeClock(start = '2026-03-01T08:00:00.000Z') {
+  const clock = { value: start };
+  return { clock, now: () => clock.value };
+}
+
 function setup() {
   const ds = new InMemoryTaskDataSource({ 'subj-1': 'sem-1', 'subj-2': 'sem-1' });
-  const repo = new TaskRepositoryImpl(ds);
+  const { clock, now } = fakeClock();
+  const repo = new TaskRepositoryImpl(ds, now);
   const uc = buildTaskUseCases(repo);
-  return { ds, repo, uc };
+  return { ds, repo, uc, clock };
 }
 
 const input = {
@@ -108,6 +116,59 @@ describe('tasks', () => {
     const created = await repo.create(input);
     const res = await uc.updateStatus.execute(created.id, 'done');
     expect(res.ok && res.value.status).toBe('done');
+  });
+
+  it('sella created_at al crear y deja completed_at vacío', async () => {
+    const { repo } = setup();
+    const created = await repo.create(input);
+    expect(created.createdAt).toBe('2026-03-01T08:00:00.000Z');
+    expect(created.completedAt).toBeUndefined();
+  });
+
+  it('sella completed_at al marcar como hecha', async () => {
+    const { uc, repo, clock } = setup();
+    const created = await repo.create(input);
+
+    clock.value = '2026-03-14T17:30:00.000Z';
+    const done = await uc.updateStatus.execute(created.id, 'done');
+
+    expect(done.ok && done.value.completedAt).toBe('2026-03-14T17:30:00.000Z');
+    // La fecha de creación no se toca al completar.
+    expect(done.ok && done.value.createdAt).toBe('2026-03-01T08:00:00.000Z');
+  });
+
+  it('borra completed_at al reabrir una tarea', async () => {
+    const { uc, repo, clock } = setup();
+    const created = await repo.create(input);
+    clock.value = '2026-03-14T17:30:00.000Z';
+    await uc.updateStatus.execute(created.id, 'done');
+
+    const reopened = await uc.updateStatus.execute(created.id, 'pending');
+
+    expect(reopened.ok && reopened.value.completedAt).toBeUndefined();
+  });
+
+  it('conserva la fecha de completado al editar una tarea ya hecha', async () => {
+    const { uc, repo, clock } = setup();
+    const created = await repo.create(input);
+    clock.value = '2026-03-14T17:30:00.000Z';
+    await uc.updateStatus.execute(created.id, 'done');
+
+    clock.value = '2026-04-20T09:00:00.000Z';
+    const edited = await uc.update.execute(created.id, { title: 'Informe v2' });
+
+    // Completar ocurrió una vez; renombrarla después no lo cambia.
+    expect(edited.ok && edited.value.completedAt).toBe('2026-03-14T17:30:00.000Z');
+  });
+
+  it('sella completed_at cuando el estado pasa a hecha vía update', async () => {
+    const { uc, repo, clock } = setup();
+    const created = await repo.create(input);
+
+    clock.value = '2026-03-20T12:00:00.000Z';
+    const edited = await uc.update.execute(created.id, { status: 'done' });
+
+    expect(edited.ok && edited.value.completedAt).toBe('2026-03-20T12:00:00.000Z');
   });
 
   it('actualiza y elimina una tarea', async () => {

@@ -10,6 +10,7 @@ CalendarMemory/
 │   ├── features/
 │   │   ├── notificationPlanner.test.ts
 │   │   ├── notificationService.test.ts
+│   │   ├── semesterHistory.test.ts
 │   │   ├── semesters.test.ts
 │   │   ├── subjects.test.ts
 │   │   └── tasks.test.ts
@@ -159,11 +160,13 @@ CalendarMemory/
 │   │   │   │   │   └── Semester.ts
 │   │   │   │   ├── repositories/
 │   │   │   │   │   └── SemesterRepository.ts
-│   │   │   │   └── usecases/
-│   │   │   │       └── semesterUseCases.ts
+│   │   │   │   ├── usecases/
+│   │   │   │   │   └── semesterUseCases.ts
+│   │   │   │   └── semesterHistory.ts
 │   │   │   └── presentation/
 │   │   │       ├── screens/
 │   │   │       │   ├── SemesterFormScreen.tsx
+│   │   │       │   ├── SemesterHistoryScreen.tsx
 │   │   │       │   └── SemestersScreen.tsx
 │   │   │       └── store/
 │   │   │           └── semestersStore.ts
@@ -235,6 +238,7 @@ CalendarMemory/
 │   │   │   ├── EmptyState.tsx
 │   │   │   ├── index.ts
 │   │   │   ├── Pill.tsx
+│   │   │   ├── ProgressBar.tsx
 │   │   │   ├── Screen.tsx
 │   │   │   ├── ScreenHeader.tsx
 │   │   │   └── TextField.tsx

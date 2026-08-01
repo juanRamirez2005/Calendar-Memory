@@ -1,6 +1,6 @@
 // src/features/semesters/presentation/screens/SemestersScreen.tsx
 import React, { useCallback } from 'react';
-import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   Button,
@@ -46,19 +46,40 @@ export function SemestersScreen() {
 
   const renderItem = ({ item }: { item: Semester }) => (
     <Card>
-      <View style={styles.rowBetween}>
-        <Text style={[styles.name, { color: theme.colors.text }]}>
-          {item.name}
+      {/*
+        Solo la cabecera abre el historial. Hacer tocable la Card entera
+        anidaría los botones de abajo dentro de otro Pressable y un toque en
+        "Eliminar" dispararía además la navegación.
+      */}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Ver historial de ${item.name}`}
+        onPress={() =>
+          navigation.navigate('SemesterHistory', { semesterId: item.id })
+        }
+        style={({ pressed }) => (pressed ? styles.pressed : undefined)}>
+        <View style={styles.rowBetween}>
+          <Text style={[styles.name, { color: theme.colors.text }]}>
+            {item.name}
+          </Text>
+          <View style={styles.headerRight}>
+            {item.isActive ? (
+              <Pill label="Activo" color={theme.colors.success} filled />
+            ) : item.isArchived ? (
+              <Pill label="Archivado" color={theme.colors.textMuted} />
+            ) : null}
+            <Text style={[styles.chevron, { color: theme.colors.primary }]}>
+              ›
+            </Text>
+          </View>
+        </View>
+        <Text style={[styles.dates, { color: theme.colors.textMuted }]}>
+          {formatDate(item.startDate)} — {formatDate(item.endDate)}
         </Text>
-        {item.isActive ? (
-          <Pill label="Activo" color={theme.colors.success} filled />
-        ) : item.isArchived ? (
-          <Pill label="Archivado" color={theme.colors.textMuted} />
-        ) : null}
-      </View>
-      <Text style={[styles.dates, { color: theme.colors.textMuted }]}>
-        {formatDate(item.startDate)} — {formatDate(item.endDate)}
-      </Text>
+        <Text style={[styles.hint, { color: theme.colors.primary }]}>
+          Ver historial
+        </Text>
+      </Pressable>
       <View style={styles.actions}>
         {!item.isActive && !item.isArchived ? (
           <Button
@@ -127,7 +148,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   name: { fontSize: 17, fontWeight: '600', flexShrink: 1 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  chevron: { fontSize: 24, fontWeight: '700' },
   dates: { fontSize: 13, marginTop: 4 },
+  hint: { fontSize: 12.5, fontWeight: '700', marginTop: 8 },
+  pressed: { opacity: 0.6 },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
   action: { flexGrow: 1, minWidth: 96, paddingHorizontal: 12 },
   grow: { flexGrow: 1 },

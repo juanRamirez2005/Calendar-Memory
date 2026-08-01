@@ -8,4 +8,8 @@ export type TaskRow = {
   due_date: string | null;
   status: string;
   priority: string;
+  /** ISO-8601 UTC. Null en tareas anteriores a la migración v3. */
+  created_at: string | null;
+  /** ISO-8601 UTC del paso a 'done'. Null si nunca se completó. */
+  completed_at: string | null;
 };

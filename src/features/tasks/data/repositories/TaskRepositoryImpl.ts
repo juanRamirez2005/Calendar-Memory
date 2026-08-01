@@ -7,13 +7,35 @@ import type {
   TaskStatus,
   UpdateTaskInput,
 } from '../../domain/entities/Task';
+// `TaskStatus` se usa además en completionStamp, definido más abajo.
 import type { TaskRepository } from '../../domain/repositories/TaskRepository';
 import type { TaskRow } from '../dto/TaskRow';
 import { rowToTask } from '../mappers/taskMapper';
 import type { TaskDataSource } from '../datasources/TaskDataSource';
 
+/**
+ * Marca de completado que corresponde a un estado. Solo 'done' la lleva: si la
+ * tarea se reabre, se borra para no dejar una fecha que contradiga al estado.
+ * Se conserva la original cuando la tarea ya estaba hecha, porque completarla
+ * ocurrió una vez y editar el título después no cambia cuándo fue.
+ */
+function completionStamp(
+  status: TaskStatus,
+  previous: string | null,
+  now: () => string,
+): string | null {
+  if (status !== 'done') {
+    return null;
+  }
+  return previous ?? now();
+}
+
 export class TaskRepositoryImpl implements TaskRepository {
-  constructor(private readonly ds: TaskDataSource) {}
+  /** `now` es inyectable para poder fijar el tiempo en los tests. */
+  constructor(
+    private readonly ds: TaskDataSource,
+    private readonly now: () => string = () => new Date().toISOString(),
+  ) {}
 
   async create(input: CreateTaskInput): Promise<Task> {
     const row: TaskRow = {
@@ -24,6 +46,8 @@ export class TaskRepositoryImpl implements TaskRepository {
       due_date: input.dueDate ?? null,
       status: 'pending',
       priority: input.priority ?? 'medium',
+      created_at: this.now(),
+      completed_at: null,
     };
     await this.ds.insert(row);
     return rowToTask(row);
@@ -51,6 +75,7 @@ export class TaskRepositoryImpl implements TaskRepository {
     if (!current) {
       throw AppError.notFound('La tarea no existe.');
     }
+    const status = patch.status ?? (current.status as TaskStatus);
     const next: TaskRow = {
       ...current,
       subject_id: patch.subjectId ?? current.subject_id,
@@ -61,8 +86,9 @@ export class TaskRepositoryImpl implements TaskRepository {
           : current.description,
       due_date:
         patch.dueDate !== undefined ? patch.dueDate ?? null : current.due_date,
-      status: patch.status ?? current.status,
+      status,
       priority: patch.priority ?? current.priority,
+      completed_at: completionStamp(status, current.completed_at, this.now),
     };
     await this.ds.update(next);
     return rowToTask(next);
@@ -73,8 +99,9 @@ export class TaskRepositoryImpl implements TaskRepository {
     if (!current) {
       throw AppError.notFound('La tarea no existe.');
     }
-    await this.ds.updateStatus(id, status);
-    return rowToTask({ ...current, status });
+    const completedAt = completionStamp(status, current.completed_at, this.now);
+    await this.ds.updateStatus(id, status, completedAt);
+    return rowToTask({ ...current, status, completed_at: completedAt });
   }
 
   async delete(id: string): Promise<void> {

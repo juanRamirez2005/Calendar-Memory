@@ -61,4 +61,42 @@ describe('planRemindersForTask', () => {
     expect(byId['t1-1']).toBe('tomorrow');
     expect(byId['t1-2']).toBe('soon');
   });
+
+  describe('aviso inmediato cuando ya se perdió el del día', () => {
+    // 3 PM: el recordatorio de las 9 AM de hoy ya pasó.
+    const TARDE = new Date(2026, 2, 1, 15, 0, 0);
+
+    it('avisa al crear una tarea que vence mañana pasada la hora del aviso', () => {
+      const plans = planRemindersForTask({ ...base, dueDate: '2026-03-02' }, TARDE);
+      const now = plans.find(p => p.id === 't1-now');
+      expect(now).toBeDefined();
+      expect(now!.urgency).toBe('tomorrow');
+      expect(now!.timestamp).toBeGreaterThan(TARDE.getTime());
+      // El del día de entrega (9 AM de mañana) sigue programado.
+      expect(plans.map(p => p.id)).toContain('t1-0');
+    });
+
+    it('avisa al crear una tarea que vence hoy', () => {
+      const plans = planRemindersForTask({ ...base, dueDate: '2026-03-01' }, TARDE);
+      expect(plans.map(p => p.id)).toEqual(['t1-now']);
+      expect(plans[0].urgency).toBe('today');
+    });
+
+    it('marca como vencida una tarea con fecha pasada', () => {
+      const plans = planRemindersForTask({ ...base, dueDate: '2026-02-25' }, TARDE);
+      expect(plans).toHaveLength(1);
+      expect(plans[0].urgency).toBe('overdue');
+    });
+
+    it('no duplica si el aviso del día aún no ha llegado', () => {
+      // 8 AM: el recordatorio de las 9 AM de hoy sigue siendo futuro.
+      const plans = planRemindersForTask({ ...base, dueDate: '2026-03-02' }, NOW);
+      expect(plans.map(p => p.id)).not.toContain('t1-now');
+    });
+
+    it('no avisa por tareas fuera de la ventana de 7 días', () => {
+      const plans = planRemindersForTask({ ...base, dueDate: '2026-04-01' }, TARDE);
+      expect(plans.map(p => p.id)).not.toContain('t1-now');
+    });
+  });
 });

@@ -14,6 +14,10 @@ export type Task = {
   dueDate?: string; // YYYY-MM-DD, opcional
   status: TaskStatus;
   priority: Priority;
+  /** ISO-8601 UTC. Ausente en tareas creadas antes de la migración v3. */
+  createdAt?: string;
+  /** ISO-8601 UTC del paso a 'done'. Ausente si está sin completar. */
+  completedAt?: string;
 };
 
 export type CreateTaskInput = {

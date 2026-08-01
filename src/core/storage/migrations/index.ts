@@ -59,6 +59,17 @@ const migrations: Array<(db: Database) => Promise<void>> = [
       );
     `);
   },
+  // v3 — trazabilidad: cuándo se creó cada tarea y cuándo se marcó como hecha.
+  // Ambas ISO-8601 UTC y nullable: las tareas anteriores a esta migración no
+  // tienen forma de saberlo, y rellenarlas con una fecha inventada haría pasar
+  // por dato real algo que no lo es. La UI las muestra como "—".
+  async db => {
+    await db.execute('ALTER TABLE tasks ADD COLUMN created_at TEXT;');
+    await db.execute('ALTER TABLE tasks ADD COLUMN completed_at TEXT;');
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_tasks_completed ON tasks(completed_at);',
+    );
+  },
 ];
 
 /**

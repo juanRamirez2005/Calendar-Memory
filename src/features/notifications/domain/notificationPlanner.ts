@@ -65,10 +65,24 @@ function headline(urgency: Urgency, daysLeft: number): string {
   }
 }
 
+/** Días completos entre dos fechas, ignorando la hora. */
+function daysBetween(from: Date, to: Date): number {
+  const a = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  const b = new Date(to.getFullYear(), to.getMonth(), to.getDate());
+  return Math.round((b.getTime() - a.getTime()) / 86400000);
+}
+
+/** Margen sobre `now` para el aviso inmediato: notifee rechaza timestamps ya pasados. */
+const IMMEDIATE_DELAY_MS = 5000;
+
 /**
  * Calcula los recordatorios (uno por día en la ventana previa) para una tarea.
- * Solo devuelve timestamps futuros; vacío si no hay fecha, ya está hecha, o
- * la ventana quedó en el pasado.
+ * Solo devuelve timestamps futuros; vacío si no hay fecha o ya está hecha.
+ *
+ * Si al momento de crear/editar la tarea el recordatorio que le tocaría por
+ * urgencia actual ya pasó (p. ej. se crea a las 3 PM algo que vence mañana, y
+ * el aviso de las 9 AM quedó atrás), se emite uno inmediato para no dejar al
+ * usuario sin señal hasta el día de entrega.
  */
 export function planRemindersForTask(
   input: PlannerInput,
@@ -82,6 +96,21 @@ export function planRemindersForTask(
     return [];
   }
 
+  const subject = input.subjectName ? ` · ${input.subjectName}` : '';
+  const build = (
+    id: string,
+    timestamp: number,
+    urgency: Urgency,
+    daysLeft: number,
+  ): ReminderPlan => ({
+    id,
+    taskId: input.taskId,
+    timestamp,
+    urgency,
+    title: `${EMOJI[urgency]} ${headline(urgency, daysLeft)}`,
+    body: `${input.title}${subject}`,
+  });
+
   const plans: ReminderPlan[] = [];
   for (let offset = REMINDER_WINDOW_DAYS; offset >= 0; offset--) {
     const when = new Date(due);
@@ -89,16 +118,26 @@ export function planRemindersForTask(
     if (when.getTime() <= now.getTime()) {
       continue; // no programar recordatorios en el pasado
     }
-    const urgency = urgencyForDaysLeft(offset);
-    const subject = input.subjectName ? ` · ${input.subjectName}` : '';
-    plans.push({
-      id: `${input.taskId}-${offset}`,
-      taskId: input.taskId,
-      timestamp: when.getTime(),
-      urgency,
-      title: `${EMOJI[urgency]} ${headline(urgency, offset)}`,
-      body: `${input.title}${subject}`,
-    });
+    plans.push(
+      build(`${input.taskId}-${offset}`, when.getTime(), urgencyForDaysLeft(offset), offset),
+    );
+  }
+
+  // ¿Ya se perdió el aviso que correspondía a la urgencia de hoy?
+  const daysLeft = daysBetween(now, due);
+  const missedToday =
+    daysLeft <= REMINDER_WINDOW_DAYS &&
+    !plans.some(p => p.id === `${input.taskId}-${Math.max(daysLeft, 0)}`);
+  if (missedToday) {
+    const urgency = urgencyForDaysLeft(daysLeft);
+    plans.push(
+      build(
+        `${input.taskId}-now`,
+        now.getTime() + IMMEDIATE_DELAY_MS,
+        urgency,
+        Math.max(daysLeft, 0),
+      ),
+    );
   }
   return plans;
 }

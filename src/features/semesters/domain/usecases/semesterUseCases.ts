@@ -43,6 +43,14 @@ export class ListSemesters {
   }
 }
 
+export class GetSemester {
+  constructor(private readonly repo: SemesterRepository) {}
+
+  execute(id: string): Promise<Result<Semester | null>> {
+    return tryCatch(() => this.repo.getById(id));
+  }
+}
+
 export class GetActiveSemester {
   constructor(private readonly repo: SemesterRepository) {}
 
@@ -111,6 +119,7 @@ export class ArchiveSemester {
 export type SemesterUseCases = {
   create: CreateSemester;
   list: ListSemesters;
+  get: GetSemester;
   getActive: GetActiveSemester;
   update: UpdateSemester;
   remove: DeleteSemester;
@@ -124,6 +133,7 @@ export function buildSemesterUseCases(
   return {
     create: new CreateSemester(repo),
     list: new ListSemesters(repo),
+    get: new GetSemester(repo),
     getActive: new GetActiveSemester(repo),
     update: new UpdateSemester(repo),
     remove: new DeleteSemester(repo),

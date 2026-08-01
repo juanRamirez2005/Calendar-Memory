@@ -25,6 +25,7 @@ jest.mock('@notifee/react-native', () => ({
     getNotificationSettings: jest.fn(async () => notifeeSettings),
     openAlarmPermissionSettings: jest.fn(async () => undefined),
     createChannel: jest.fn(async () => 'ch'),
+    deleteChannel: jest.fn(async () => undefined),
     createTriggerNotification: jest.fn(async () => 'id'),
     cancelTriggerNotification: jest.fn(async () => undefined),
   },

@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from '@theme/ThemeContext';
 import { SemestersScreen } from '@features/semesters/presentation/screens/SemestersScreen';
 import { SemesterFormScreen } from '@features/semesters/presentation/screens/SemesterFormScreen';
+import { SemesterHistoryScreen } from '@features/semesters/presentation/screens/SemesterHistoryScreen';
 import { SubjectDetailScreen } from '@features/subjects/presentation/screens/SubjectDetailScreen';
 import { SubjectFormScreen } from '@features/subjects/presentation/screens/SubjectFormScreen';
 import { TaskDetailScreen } from '@features/tasks/presentation/screens/TaskDetailScreen';
@@ -50,6 +51,11 @@ export function RootNavigator() {
           name="Semesters"
           component={SemestersScreen}
           options={{ title: 'Semestres' }}
+        />
+        <Stack.Screen
+          name="SemesterHistory"
+          component={SemesterHistoryScreen}
+          options={{ title: 'Historial' }}
         />
         <Stack.Screen
           name="SubjectDetail"

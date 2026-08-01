@@ -28,17 +28,13 @@ function getNotifee(): Notifee | null {
 const CHANNELS = {
   high: 'reminders-high',
   default: 'reminders-default',
-  low: 'reminders-low',
 } as const;
 
 function channelFor(urgency: Urgency): string {
   if (urgency === 'today' || urgency === 'tomorrow' || urgency === 'overdue') {
     return CHANNELS.high;
   }
-  if (urgency === 'soon') {
-    return CHANNELS.default;
-  }
-  return CHANNELS.low;
+  return CHANNELS.default;
 }
 
 const COLORS: Record<Urgency, string> = {
@@ -95,6 +91,8 @@ export class NotifeeNotificationService implements NotificationService {
       for (let offset = 0; offset <= REMINDER_WINDOW_DAYS; offset++) {
         await m.default.cancelTriggerNotification(`${taskId}-${offset}`);
       }
+      // El aviso inmediato no lleva offset numérico (ver planRemindersForTask).
+      await m.default.cancelTriggerNotification(`${taskId}-now`);
     } catch {
       // ignorar
     }
@@ -167,11 +165,14 @@ export class NotifeeNotificationService implements NotificationService {
       name: 'Entregas próximas',
       importance: AndroidImportance.DEFAULT,
     });
-    await notifee.createChannel({
-      id: CHANNELS.low,
-      name: 'Entregas lejanas',
-      importance: AndroidImportance.LOW,
-    });
+    // El canal 'reminders-low' (IMPORTANCE_LOW) hacía invisibles los avisos de
+    // 4-7 días. Android no deja subir la importancia de un canal existente, así
+    // que hay que borrarlo para que 'far' pase por el canal default.
+    try {
+      await notifee.deleteChannel('reminders-low');
+    } catch {
+      // No existía (instalación nueva): nada que borrar.
+    }
     this.initialized = true;
   }
 
